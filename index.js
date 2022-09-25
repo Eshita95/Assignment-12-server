@@ -3,6 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
+
 const stripe = require('stripe')(process.env.STRIPE_SECURE_KEY);
 const app = express();
 const port = process.env.PORT || 5000;
@@ -64,15 +65,15 @@ async function run() {
         });
 
         // get all tools
-        app.get('/items', async (req, res) => {
+        app.get('/product', async (req, res) => {
             const query = {};
             const cursor = toolsCollection.find(query);
-            const items = await cursor.toArray();
-            res.send(items);
+            const product = await cursor.toArray();
+            res.send(product);
         });
 
         // get single tool by id
-        app.get('/items/:id', async (req, res) => {
+        app.get('/product/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await toolsCollection.findOne(query);
@@ -214,14 +215,14 @@ async function run() {
         });
 
         // insert items
-        app.post('/items', verifyJWT, verifyAdmin, async (req, res) => {
+        app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
             const tool = req.body;
             const result = await toolsCollection.insertOne(tool);
             res.send(result);
         });
 
         // delete items by id
-        app.delete('/items/:id', verifyJWT, verifyAdmin, async (req, res) => {
+        app.delete('/product/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await toolsCollection.deleteOne(query);
